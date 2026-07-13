@@ -1,4 +1,4 @@
-<div id="queryModal" class="fixed inset-0 z-[99990] hidden items-center justify-center">
+<div id="queryModal" class="fixed inset-0 z-[99990] hidden justify-center pt-10">
     <div id="queryModalOverlay" class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
 
     <div class="relative w-full max-w-2xl overflow-hidden rounded-xl bg-white shadow-2xl dark:bg-gray-900">
@@ -22,7 +22,7 @@
     </div>
 </div>
 
-<div id="taskModal" class="fixed inset-0 z-[99990] hidden items-center justify-center">
+<div id="taskModal" class="fixed inset-0 z-[99990] hidden justify-center pt-10">
     <div id="taskModalOverlay" class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
 
     <div class="relative w-full max-w-2xl overflow-hidden rounded-xl bg-white shadow-2xl dark:bg-gray-900">
@@ -63,6 +63,22 @@
                         class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 outline-none focus:border-brand-500 dark:border-gray-700 dark:bg-gray-900 dark:text-white"
                         placeholder="Enter task description"></textarea>
                     <p id="taskDescriptionError" class="mt-1 hidden text-xs text-red-500"></p>
+                </div>
+
+                <div>
+                    <label for="taskEndDate" class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        End Date
+                    </label>
+
+                    <input
+                        type="text"
+                        id="taskEndDate"
+                        class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 outline-none focus:border-brand-500 dark:border-gray-700 dark:bg-gray-900 dark:text-white"
+                        placeholder="Select end date"
+                        readonly
+                    >
+
+                    <p id="taskEndDateError" class="mt-1 hidden text-xs text-red-500"></p>
                 </div>
 
                 <div>

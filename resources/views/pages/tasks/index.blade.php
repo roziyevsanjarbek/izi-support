@@ -108,7 +108,12 @@
                     <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Name</th>
                     <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Creator</th>
                     <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Start date</th>
-                    <th class="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Duration</th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                        End Date
+                    </th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                        Elapsed
+                    </th>
                     <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Status</th>
                     <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Actions</th>
                 </tr>
@@ -120,11 +125,11 @@
                         <td class="px-4 py-4 text-sm text-gray-700 dark:text-gray-300" x-text="task.id"></td>
 
                         <td class="px-4 py-4">
-    <div class="max-w-[280px]">
-        <div class="truncate text-sm font-medium text-gray-900 dark:text-gray-100" x-text="task.name"></div>
-        <div class="mt-1 text-xs text-gray-500 dark:text-gray-400" x-text="`${task.attachments_count ?? 0} attachment(s)`"></div>
-    </div>
-</td>
+                        <div class="max-w-[280px]">
+                            <div class="truncate text-sm font-medium text-gray-900 dark:text-gray-100" x-text="task.name"></div>
+                            <div class="mt-1 text-xs text-gray-500 dark:text-gray-400" x-text="`${task.attachments_count ?? 0} attachment(s)`"></div>
+                        </div>
+                    </td>
 
                         <td class="px-4 py-4">
                             <span class="text-sm font-medium text-gray-700 dark:text-gray-300" x-text="task.creator_name || 'Unknown'"></span>
@@ -135,10 +140,19 @@
                         </td>
 
                         <td class="px-4 py-4">
-                            <button type="button" @click="toggleTaskDurationMode(task)"
-                                class="inline-flex w-full items-center justify-center rounded-lg px-3 py-1 text-center font-mono text-sm font-semibold tabular-nums text-gray-900 transition hover:bg-gray-50 dark:text-gray-100 dark:hover:bg-white/5">
-                                <span class="inline-block min-w-[14ch] text-center" x-text="taskTimer(task)"></span>
-                            </button>
+                            <div class="text-sm whitespace-nowrap text-gray-700 dark:text-gray-300"
+                                 x-text="formatDateTime(task.end_date)">
+                            </div>
+                        </td>
+
+                        <td class="px-4 py-4">
+                            <span
+                                class="font-mono text-sm font-semibold"
+                                :class="new Date(task.end_date) < new Date(now)
+                                    ? 'text-red-600'
+                                    : 'text-emerald-600'"
+                                x-text="countdown(task.end_date)">
+                            </span>
                         </td>
 
                         <td class="px-4 py-4">
@@ -365,39 +379,31 @@ function taskIndexPage(initialTasks = [], initialStats = {}) {
             }).format(date).replace(',', '');
         },
 
-        formatDuration(ms, mode = 'hours') {
-            if (ms < 0) ms = 0;
+        countdown(endDate) {
+            if (!endDate) return '-';
 
-            const totalSeconds = Math.floor(ms / 1000);
-            const totalHours = Math.floor(totalSeconds / 3600);
-            const days = Math.floor(totalSeconds / 86400);
-            const hours = Math.floor((totalSeconds % 86400) / 3600);
-            const minutes = Math.floor((totalSeconds % 3600) / 60);
-            const seconds = totalSeconds % 60;
+            const end = new Date(endDate);
 
-            const pad = (n) => String(n).padStart(2, '0');
+            if (isNaN(end.getTime())) return '-';
 
-            if (mode === 'days') {
-                return `${days}:${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+            let diff = end.getTime() - this.now;
+
+            if (diff <= 0) {
+                return 'OVERDUE';
             }
 
-            return `${totalHours}:${pad(minutes)}:${pad(seconds)}`;
-        },
+            const days = Math.floor(diff / 86400000);
+            diff %= 86400000;
 
-        toggleTaskDurationMode(task) {
-            task.duration_mode = task.duration_mode === 'days' ? 'hours' : 'days';
-        },
+            const hours = Math.floor(diff / 3600000);
+            diff %= 3600000;
 
-        taskTimer(task) {
-            if (!task?.start_date) return '-';
+            const minutes = Math.floor(diff / 60000);
+            diff %= 60000;
 
-            const start = new Date(task.start_date);
-            if (isNaN(start.getTime())) return '-';
+            const seconds = Math.floor(diff / 1000);
 
-            const end = task.end_date ? new Date(task.end_date) : null;
-            const baseTime = end && !isNaN(end.getTime()) ? end.getTime() : this.now;
-
-            return this.formatDuration(baseTime - start.getTime(), task.duration_mode || 'hours');
+            return `${days}d ${String(hours).padStart(2,'0')}h ${String(minutes).padStart(2,'0')}m ${String(seconds).padStart(2,'0')}s`;
         },
 
         normalizeTask(task) {

@@ -19,6 +19,7 @@ class Conversation extends Model
         'last_message_id',
         'last_activity_at',
         'is_archived',
+        'description',
     ];
 
     protected $casts = [
@@ -45,7 +46,7 @@ class Conversation extends Model
         return $this->belongsTo(User::class, 'created_by');
     }
 
-    
+
 
     public function adminPermissions(): HasMany
     {

@@ -29,6 +29,8 @@ class StoreQueryTaskRequest extends FormRequest
         'name' => ['required', 'string', 'max:255'],
         'description' => ['required', 'string'],
 
+        'end_date' => ['required', 'date'],
+
         'attachments' => ['nullable', 'array', 'max:5'],
         'attachments.*' => ['file', 'max:102400'],
     ];

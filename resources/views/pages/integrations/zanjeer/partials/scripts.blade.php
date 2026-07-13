@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const taskDescription = document.getElementById('taskDescription');
     const taskAttachments = document.getElementById('taskAttachments');
     const taskAttachmentsList = document.getElementById('taskAttachmentsList');
+    const taskEndDate = document.getElementById('taskEndDate');
 
     const showButtons = document.querySelectorAll('[data-show-query]');
     const taskButtons = document.querySelectorAll('[data-open-task]');
@@ -20,6 +21,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const saveTaskBtn = document.getElementById('saveTaskBtn');
     const taskNameError = document.getElementById('taskNameError');
     const taskDescriptionError = document.getElementById('taskDescriptionError');
+    const taskEndDateError = document.getElementById('taskEndDate');
 
     const addTaskUrl = @json(url('tasks/query-tasks'));
 
@@ -37,6 +39,25 @@ document.addEventListener('DOMContentLoaded', function () {
 
     let currentQueryRecord = null;
     let taskAttachmentsBuffer = [];
+
+    flatpickr("#taskEndDate", {
+        dateFormat: "Y-m-d",
+        altInput: true,
+        altFormat: "F j, Y",
+        appendTo: document.body,
+        position: "below",
+        disableMobile: true
+    });
+
+    flatpickr("#taskEndDate", {
+        dateFormat: "Y-m-d",
+        altInput: true,
+        altFormat: "F j, Y",
+        appendTo: document.body,
+        position: "auto",
+        disableMobile: true,
+        static: false
+    });
 
     function escapeHtml(value) {
         return String(value)
@@ -147,8 +168,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function openModal(modal) {
         if (!modal) return;
+
         modal.classList.remove('hidden');
-        modal.classList.add('flex');
+        modal.classList.add('flex', 'items-start');
+
         lockScroll();
     }
 
@@ -524,13 +547,14 @@ document.addEventListener('DOMContentLoaded', function () {
     async function submitTask() {
         const name = taskName ? taskName.value.trim() : '';
         const description = taskDescription ? taskDescription.value.trim() : '';
+        const endDate = taskEndDate ? taskEndDate.value.trim() : '';
 
         const payload = new FormData();
         payload.append('query_id', taskQueryId ? taskQueryId.value : '');
         payload.append('operation_id', taskOperationId ? taskOperationId.value : '');
         payload.append('name', name);
         payload.append('description', description);
-
+        payload.append('end_date', endDate);
         taskAttachmentsBuffer.forEach((file) => {
             payload.append('attachments[]', file);
         });
@@ -572,6 +596,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 taskDescriptionError.textContent = errors.description[0];
                 taskDescriptionError.classList.remove('hidden');
                 taskDescription.classList.add('border-red-500');
+            }
+
+            if(errors.endDate) {
+                taskEndDateError.textContent = errors.endDate[0];
+                taskEndDateError.classList.remove('hidden');
+                taskEndDate.classList.add('border-red-500');
             }
 
             if (errors.attachments) {

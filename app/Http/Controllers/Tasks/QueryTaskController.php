@@ -106,6 +106,8 @@ class QueryTaskController extends Controller
                 'assigned_to' => $assignedUser->id,
                 'name' => $data['name'],
                 'description' => $data['description'] ?? null,
+                'start_date' => now(),
+                'end_date' => $data['end_date'] ?? null,
                 'type' => 'operation',
                 'status' => 'pending',
             ]);

@@ -129,9 +129,13 @@
 
                                 <div class="flex items-start justify-between gap-4">
                                     <span class="text-xs text-gray-500 dark:text-gray-400">Duration</span>
-                                    <button type="button"
+                                    <button
+                                        type="button"
                                         @click="toggleDurationMode()"
-                                        class="text-right text-sm font-semibold text-gray-900 hover:underline dark:text-gray-100 focus:outline-none"
+                                        class="text-right text-sm font-semibold hover:underline focus:outline-none"
+                                        :class="new Date(task.end_date) < new Date(now)
+                                            ? 'text-red-600'
+                                            : 'text-emerald-600'"
                                         x-text="taskDuration(task)">
                                     </button>
                                 </div>
@@ -448,15 +452,30 @@
             },
 
             taskDuration(task) {
-                if (!task?.start_date) return '-';
+                if (!task?.end_date) return '-';
 
-                const start = new Date(task.start_date);
-                if (isNaN(start.getTime())) return '-';
+                const end = new Date(task.end_date);
 
-                const end = task.end_date ? new Date(task.end_date) : null;
-                const baseTime = end && !isNaN(end.getTime()) ? end.getTime() : this.now;
+                if (isNaN(end.getTime())) return '-';
 
-                return this.formatDuration(baseTime - start.getTime());
+                let diff = end.getTime() - this.now;
+
+                if (diff <= 0) {
+                    return 'OVERDUE';
+                }
+
+                const days = Math.floor(diff / 86400000);
+                diff %= 86400000;
+
+                const hours = Math.floor(diff / 3600000);
+                diff %= 3600000;
+
+                const minutes = Math.floor(diff / 60000);
+                diff %= 60000;
+
+                const seconds = Math.floor(diff / 1000);
+
+                return `${days}d ${String(hours).padStart(2,'0')}h ${String(minutes).padStart(2,'0')}m ${String(seconds).padStart(2,'0')}s`;
             },
 
             isImageAttachment(attachment) {
