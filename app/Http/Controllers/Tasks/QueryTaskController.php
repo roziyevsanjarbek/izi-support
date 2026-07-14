@@ -103,6 +103,7 @@ class QueryTaskController extends Controller
                 'created_by' => auth()->id(),
                 'conversation_id' => $conversation->id,
                 'query_id' => $data['query_id'] ?? null,
+                'custom_id' => $data['custom_id'] ?? null,
                 'assigned_to' => $assignedUser->id,
                 'name' => $data['name'],
                 'description' => $data['description'] ?? null,

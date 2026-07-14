@@ -15,17 +15,18 @@ class Task extends Model
         'completed_by',
         'rejected_by',
         'created_by',
-        
+
         'query_id',
-        
+        'custom_id',
+
         'conversation_id',
         'assigned_to',
-        
+
         'name',
         'description',
         'type',
         'status',
-        
+
         'priority',
         'start_date',
         'end_date',
@@ -47,7 +48,7 @@ class Task extends Model
     {
         return $this->belongsTo(User::class, 'created_by');
     }
-    
+
     public function conversation(): BelongsTo
     {
         return $this->belongsTo(Conversation::class);
@@ -57,7 +58,7 @@ class Task extends Model
     {
         return $this->hasMany(\App\Models\Tasks\TaskRead::class);
     }
-    
+
     public function readByUsers()
     {
         return $this->belongsToMany(\App\Models\User::class, 'task_reads')

@@ -24,6 +24,7 @@ class StoreQueryTaskRequest extends FormRequest
 {
     return [
         'query_id' => ['required', 'integer'],
+        'custom_id' => ['nullable', 'string', 'max:255'],
         'operation_id' => ['required', 'integer'],
 
         'name' => ['required', 'string', 'max:255'],

@@ -43,6 +43,7 @@
         <div class="max-h-[72vh] overflow-y-auto p-3">
             <input type="hidden" id="taskQueryId">
             <input type="hidden" id="taskOperationId">
+            <input type="hidden" id="taskCustomId">
 
             <div class="grid grid-cols-1 gap-4">
                 <div>

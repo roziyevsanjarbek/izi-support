@@ -9,6 +9,7 @@
             'id' => $task->id,
             'name' => $task->name,
             'description' => $task->description,
+            'custom_id' => $task->custom_id,
             'status' => $task->status,
             'created_by' => $task->created_by,
             'creator_name' => $task->creator?->name,
@@ -105,6 +106,7 @@
                 <thead class="bg-gray-50 dark:bg-white/5">
                 <tr>
                     <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">#</th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Custom ID</th>
                     <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Name</th>
                     <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Creator</th>
                     <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Start date</th>
@@ -123,6 +125,7 @@
                 <template x-for="task in tasks" :key="task.id">
                     <tr class="hover:bg-gray-50/70 dark:hover:bg-white/5">
                         <td class="px-4 py-4 text-sm text-gray-700 dark:text-gray-300" x-text="task.id"></td>
+                        <td class="px-4 py-4 text-sm text-gray-700 dark:text-gray-300" x-text="task.custom_id || 'N/A'"></td>
 
                         <td class="px-4 py-4">
                         <div class="max-w-[280px]">

@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const taskQueryId = document.getElementById('taskQueryId');
     const taskOperationId = document.getElementById('taskOperationId');
+    const taskCustomId = document.getElementById('taskCustomId');
     const taskName = document.getElementById('taskName');
     const taskDescription = document.getElementById('taskDescription');
     const taskAttachments = document.getElementById('taskAttachments');
@@ -529,13 +530,17 @@ document.addEventListener('DOMContentLoaded', function () {
     function openTaskModal(record) {
         const operation = getOperation(record);
         const queryId = record?.id ?? '';
+        const customId = record?.custom_id ?? '';
         const operationId = operation?.operation_id ?? operation?.id ?? getByPath(record, 'operations.0.user.id', '');
+
+        console.log(customId);
 
         if (taskQueryId) taskQueryId.value = queryId;
         if (taskOperationId) taskOperationId.value = operationId;
 
         if (taskName) taskName.value = '';
         if (taskDescription) taskDescription.value = '';
+        if (taskCustomId) taskCustomId.value = customId;
 
         taskAttachmentsBuffer = [];
         renderTaskAttachments();
@@ -551,6 +556,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const payload = new FormData();
         payload.append('query_id', taskQueryId ? taskQueryId.value : '');
+        payload.append('custom_id', taskCustomId ? taskCustomId.value : '');
         payload.append('operation_id', taskOperationId ? taskOperationId.value : '');
         payload.append('name', name);
         payload.append('description', description);
