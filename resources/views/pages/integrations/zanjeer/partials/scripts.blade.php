@@ -24,6 +24,42 @@ document.addEventListener('DOMContentLoaded', function () {
     const taskDescriptionError = document.getElementById('taskDescriptionError');
     const taskEndDateError = document.getElementById('taskEndDate');
 
+    const transportTypes = {
+        1: 'Фургонный прицеп',
+        2: 'Тентованный прицеп',
+        3: 'Рефрижератор',
+        4: 'Рефрижератор без режима',
+        5: 'Тент с укрепленными бортами',
+        6: 'Лабо',
+        7: 'АВИА',
+        8: 'ЖД',
+        9: '40 HC контейнер',
+        10: '40 футовый контейнер',
+        11: '20 футовый контейнер',
+        12: 'Исузу',
+        13: 'Контейнеровоз',
+        14: 'Тралл',
+        15: 'Газель',
+        16: 'Еврофура тент длиномер 16 метров',
+        17: 'Еврофура сцепка 120-130 кубовая',
+        18: '20GP',
+        19: '20HQ',
+        20: '40GP',
+        21: '40HQ',
+        22: 'Площадка без бортов',
+    };
+
+    const serviceTypes = {
+        1: 'LTL',
+        2: 'FTL',
+        3: 'LCL',
+        4: 'FCL',
+        5: 'FTLS',
+        6: 'LCL',
+        7: 'FCL',
+    };
+
+
     const addTaskUrl = @json(url('tasks/query-tasks'));
 
     if (!queryModal || !taskModal || !queryOverlay || !taskOverlay || !queryBody) {
@@ -279,18 +315,42 @@ document.addEventListener('DOMContentLoaded', function () {
         );
     }
 
+    const needText = {
+        4: 'FCL freight rate by railway with available ETD',
+        7: 'FCL freight rate by railway with available ETD',
+
+        2: 'FTL freight rate by truck via the cheapest route',
+        5: 'FTL freight rate by truck via the cheapest route',
+    };
+
     function buildCopyText(record) {
+
+        const need = needText[record.service_type || 0] || '-';
+        const transportType = transportTypes[
+            Number(getByPath(record, 'shipment_type.transport_type_id'))
+            ] ?? '-';
+
+        const unit =
+            getByPath(record, 'shipment_type.container_count', '') ||
+            getByPath(record, 'shipment_type.count_of_cars', '-') ||
+            '-';
+
+        const packageText =
+            getByPath(record, 'shipment_type.package_type', '-') || '-';
+
+        const weight = getByPath(record, 'shipment_type.cargo_weight', '-');
+
         const lines = [
+            'No 1',
             `POL: ${getFromAddress(record)}`,
             `POD: ${getToAddress(record)}`,
-            `Unit: ${normalizeValue(getByPath(record, 'shipment_type.count_of_cars', '-'))}`,
+            `Transport type: ${transportType}`,
+            `Unit: ${unit}`,
             `Commodity: ${normalizeValue(record.cargo_name, '-')}`,
-            `HS code: ${normalizeValue(getByPath(record, 'shipment_type.code_tnved', '-'))}`,
-            `Package: ${normalizeValue(getPackageText(record), '-')}`,
-            `Dimensions: ${normalizeValue(getDimensionsText(record), '-')}`,
-            `Volume: ${normalizeValue(getVolumeText(record), '-')}`,
-            `Weight: ${normalizeValue(getWeightText(record), '-')}`,
-            `Status: ${normalizeValue(getStatusText(record), '-')}`,
+            `Package: ${packageText}`,
+            `Weight: less than ${weight} kg per cntr`,
+            `Status: ready to load soon`,
+            `Need: ${need}`,
         ];
 
         return lines.join('\n');
@@ -483,8 +543,13 @@ document.addEventListener('DOMContentLoaded', function () {
             </div>
         `;
 
+
+
+        const transportTypeId = Number(getByPath(record, 'shipment_type.transport_type_id', ''));
+
         const overviewHtml = [
             kv('Cargo', record.cargo_name),
+            kv('Transport Type', transportTypes[transportTypeId] || '-'),
             kv('Status', statusText),
             kv('Created At', formatDate(record.created_at)),
             kv('Loading At', record.loading_at),
@@ -496,7 +561,10 @@ document.addEventListener('DOMContentLoaded', function () {
             kv('Phone', customerPhone),
         ].join('');
 
+        const serviceTypeId = record.service_type;
+
         const cargoHtml = [
+            kv('Service Type', serviceTypes[serviceTypeId] || '-'),
             kv('TNVED Code', getByPath(record, 'shipment_type.code_tnved')),
             kv('Weight', `${getByPath(record, 'shipment_type.cargo_weight')} kg`),
             kv('Volume', getByPath(record, 'shipment_type.cargo_volume')),
