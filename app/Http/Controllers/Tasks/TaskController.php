@@ -8,6 +8,7 @@ use App\Models\Messages\Conversation;
 use App\Models\Messages\ConversationPermission;
 use App\Models\Tasks\Task;
 use App\Models\Tasks\TaskRead;
+use App\Models\User;
 use App\Services\Images\AttachmentService;
 use App\Services\TelegramNotificationService;
 use Illuminate\Http\Request;
@@ -497,26 +498,54 @@ class TaskController extends Controller
         return $task;
     }
 
-    public function calendar()
+    public function calendar(Request $request)
     {
-        return view('pages.tasks.calendar');
+        $users = collect();
+
+        if (auth()->user()->isSuperAdmin()) {
+            $users = User::orderBy('name')
+                ->select('id', 'name')
+                ->get();
+        }
+
+
+        return view('pages.tasks.calendar', [
+            'users' => $users,
+            'selectedUserId' => $request->user_id,
+        ]);
     }
 
-    public function calendarEvents()
+    public function calendarEvents(Request $request)
     {
-        $user = Auth::user();
 
-        $tasks = Task::with('creator')
-            ->when(
-                $user->role?->name !== 'superadmin',
-                function ($query) use ($user) {
-                    $query->where(function ($q) use ($user) {
-                        $q->where('assigned_to', $user->id)
-                            ->orWhere('created_by', $user->id);
-                    });
-                }
-            )
-            ->get();
+        $validated = $request->validate([
+            'user_id' => ['nullable', 'integer', 'exists:users,id'],
+        ]);
+
+        $user = Auth::user();
+        $selectedUserId = $validated['user_id'] ?? null;
+
+        $query = Task::with('creator');
+
+        if ($user->isSuperAdmin()) {
+
+            if ($selectedUserId) {
+                $query->where(function ($q) use ($selectedUserId) {
+                    $q->where('assigned_to', $selectedUserId)
+                        ->orWhere('created_by', $selectedUserId);
+                });
+            }
+
+        } else {
+
+            $query->where(function ($q) use ($user) {
+                $q->where('assigned_to', $user->id)
+                    ->orWhere('created_by', $user->id);
+            });
+
+        }
+
+        $tasks = $query->get();
 
         $events = $tasks->map(function ($task) {
 
