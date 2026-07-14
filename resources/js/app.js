@@ -8,6 +8,7 @@ import 'flatpickr/dist/flatpickr.min.css';
 
 // FullCalendar
 import { Calendar } from '@fullcalendar/core';
+import './task-calendar';
 
 import axios from 'axios';
 

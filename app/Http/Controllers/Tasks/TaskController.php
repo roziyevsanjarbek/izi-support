@@ -12,6 +12,7 @@ use App\Services\Images\AttachmentService;
 use App\Services\TelegramNotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
@@ -495,4 +496,62 @@ class TaskController extends Controller
 
         return $task;
     }
+
+    public function calendar()
+    {
+        return view('pages.tasks.calendar');
+    }
+
+    public function calendarEvents()
+    {
+        $user = Auth::user();
+
+        $tasks = Task::with('creator')
+            ->when(
+                $user->role?->name !== 'superadmin',
+                function ($query) use ($user) {
+                    $query->where(function ($q) use ($user) {
+                        $q->where('assigned_to', $user->id)
+                            ->orWhere('created_by', $user->id);
+                    });
+                }
+            )
+            ->get();
+
+        $events = $tasks->map(function ($task) {
+
+            $color = match ($task->status) {
+                'completed' => '#22c55e',
+                'pending'   => '#f59e0b',
+                'rejected'  => '#ef4444',
+                default     => '#3b82f6',
+            };
+
+            return [
+                'id' => $task->id,
+                'title' => $task->name,
+
+                // Deadline kuni ko'rsatiladi
+                'start' => optional($task->end_date)->toDateString(),
+
+                'backgroundColor' => $color,
+                'borderColor' => $color,
+
+                'extendedProps' => [
+                    'status'      => $task->status,
+                    'priority'    => $task->priority,
+                    'description' => $task->description,
+                    'start_date'  => optional($task->start_date)?->format('Y-m-d'),
+                    'deadline'    => optional($task->end_date)?->format('Y-m-d'),
+                    'creator'     => optional($task->creator)->name,
+                ],
+
+                'url' => route('tasks.show', $task),
+            ];
+        });
+
+        return response()->json($events);
+    }
+
+
 }

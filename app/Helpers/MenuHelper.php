@@ -30,6 +30,11 @@ class MenuHelper
                 'path' => '/tasks/query-tasks',
             ],
             [
+                'icon' => 'calendar',
+                'name' => 'Query Task Calendar',
+                'path' => '/tasks/calendar',
+            ],
+            [
                 'icon' => 'task',
                 'name' => 'Tasks',
                 'path' => '/tasks',
@@ -103,7 +108,7 @@ class MenuHelper
                 $subItems = $item['subItems'] ?? [];
 
                 if (!empty($subItems) && is_array($subItems)) {
-                    $filteredSubItems = array_values(array_filter($subItems, function ($subItem) use ($user, $isSuperAdmin) {
+                    $filteredSubItems = array_values((array)array_filter($subItems, function ($subItem) use ($user, $isSuperAdmin) {
                         if (empty($subItem['permission'])) {
                             return false;
                         }

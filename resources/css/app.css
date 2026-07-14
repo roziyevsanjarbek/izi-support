@@ -875,6 +875,50 @@ pre[class*='language-'] {
     }
 }
 
+.fc-toolbar-title {
+    font-size: 28px !important;
+    font-weight: 700;
+}
+
+.fc .fc-button {
+    border-radius: 10px !important;
+}
+
+.fc-event {
+    border-radius: 8px;
+    border: none;
+    padding: 2px 6px;
+}
+
+.fc-day-today {
+    background: #eff6ff !important;
+}
+
+.dark .fc-day-today {
+    background: #1e293b !important;
+}
+
+.fc .fc-day-today {
+    background: #eff6ff !important;
+}
+
+.dark .fc .fc-day-today {
+    background: #1e3a8a20 !important;
+}
+
+.fc .fc-day-today .fc-daygrid-day-number {
+    background: #2563eb;
+    color: #fff !important;
+    width: 30px;
+    height: 30px;
+    border-radius: 9999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 6px;
+    font-weight: 600;
+}
+
 @media screen and (max-width: 525px) {
   .flatpickr-calendar.static {
     margin-right: -60px !important;

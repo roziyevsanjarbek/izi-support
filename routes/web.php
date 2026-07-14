@@ -6,7 +6,6 @@ use App\Http\Controllers\Calendar\CalendarIndexController;
 use App\Http\Controllers\Integrations\Zanjeer\QueryController;
 use App\Http\Controllers\Messages\ConversationController;
 use App\Http\Controllers\Messages\ConversationMessageController;
-use App\Http\Controllers\Messages\UserConversationController;
 use App\Http\Controllers\Page\PageController;
 use App\Http\Controllers\Page\UserController;
 use App\Http\Controllers\Requests\RequestBidController;
@@ -41,6 +40,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
     Route::prefix('tasks')->name('tasks.')->group(function () {
         Route::get('/', [TaskController::class, 'index'])->name('index');
+        Route::get('/calendar', [TaskController::class, 'calendar'])->name('calendar');
+        Route::get('/calendar/events', [TaskController::class, 'calendarEvents'])->name('tasks.calendar.events');
         Route::post('/', [TaskController::class, 'store'])->name('store');
         Route::patch('/{task}/status', [TaskController::class, 'update'])->name('status.update');
         Route::put('/{task}/details', [TaskController::class, 'updateDetails'])->name('update-details');
