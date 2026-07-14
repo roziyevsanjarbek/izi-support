@@ -89,6 +89,7 @@ class TaskController extends Controller
                 'created_by' => auth()->id(),
                 'conversation_id' => $conversation->id,
                 'name' => $validated['name'],
+                'end_date' => $validated['end_date'] ?? null,
                 'description' => $validated['description'] ?? null,
                 'status' => 'pending',
                 'type' => 'default',
@@ -295,6 +296,7 @@ class TaskController extends Controller
         DB::transaction(function () use ($task, $validated, $deletedIds, $newFiles, $attachmentService) {
             $task->update([
                 'name' => $validated['name'],
+                'end_date' => $validated['end_date'] ?? null,
                 'description' => $validated['description'] ?? null,
             ]);
 
@@ -364,6 +366,7 @@ class TaskController extends Controller
         $rules = [
             'name' => ['required', 'string', 'max:255'],
             'description' => [$requireDescription ? 'required' : 'nullable', 'string'],
+            'end_date' => ['nullable', 'date', 'after_or_equal:today'],
             'attachments' => ['nullable', 'array', 'max:5'],
             'attachments.*' => ['file', 'max:102400'],
             'deleted_attachment_ids' => ['nullable', 'array'],

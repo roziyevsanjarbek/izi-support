@@ -29,6 +29,22 @@
                 </div>
 
                 <div>
+                    <label for="editTaskEndDate" class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        End Date
+                    </label>
+
+                    <input
+                        type="text"
+                        id="editTaskEndDate"
+                        placeholder="YYYY-MM-DD"
+                        class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 outline-none focus:border-brand-500 dark:border-gray-700 dark:bg-gray-900 dark:text-white"
+                        x-model="editForm.end_date"
+                        readonly
+                    >
+                    <p id="editTaskEndDateError" class="mt-1 hidden text-xs text-red-500"></p>
+                </div>
+
+                <div>
                     <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">Current attachments</label>
 
                     <div class="grid gap-3 sm:grid-cols-2">

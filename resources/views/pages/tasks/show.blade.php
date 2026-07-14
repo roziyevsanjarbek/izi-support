@@ -297,9 +297,12 @@
 
 @push('scripts')
     <script>
-    function taskShowPage(initialTask) {
+
+        function taskShowPage(initialTask) {
         return {
             task: initialTask,
+
+            endDatePicker: null,
 
             modals: {
                 edit: false,
@@ -315,6 +318,8 @@
             editForm: {
                 name: '',
                 description: '',
+                end_date: '',
+                start_date: '',
                 attachments: [],
                 deleted_attachment_ids: [],
             },
@@ -537,9 +542,32 @@
             openEdit() {
                 this.editForm.name = this.task.name ?? '';
                 this.editForm.description = this.task.description ?? '';
+                this.editForm.end_date = this.task.end_date ?? '';
+
                 this.editForm.attachments = [];
                 this.editForm.deleted_attachment_ids = [];
+
                 this.modals.edit = true;
+
+                this.$nextTick(() => {
+
+                    if (this.endDatePicker) {
+                        this.endDatePicker.destroy();
+                    }
+
+                    this.endDatePicker = flatpickr("#editTaskEndDate", {
+                        dateFormat: "Y-m-d",
+                        altInput: true,
+                        altFormat: "F j, Y",
+                        defaultDate: this.editForm.end_date,
+                        disableMobile: true,
+
+                        onChange: (selectedDates, dateStr) => {
+                            this.editForm.end_date = dateStr;
+                        }
+                    });
+
+                });
             },
 
             askComplete() {
@@ -559,6 +587,11 @@
             closeModal(name) {
                 if ((name === 'confirm' && this.loadingAction) || (name === 'edit' && this.savingEdit)) return;
                 this.modals[name] = false;
+
+                if (name === 'edit' && this.endDatePicker) {
+                    this.endDatePicker.destroy();
+                    this.endDatePicker = null;
+                }
             },
 
             closeAll(force = false) {
@@ -611,6 +644,7 @@
                     const formData = new FormData();
                     formData.append('_method', 'PUT');
                     formData.append('name', this.editForm.name);
+                    formData.append('end_date', this.editForm.end_date || '');
                     formData.append('description', this.editForm.description || '');
 
                     this.editForm.attachments.forEach((file) => {
