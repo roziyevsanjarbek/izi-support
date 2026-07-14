@@ -24,6 +24,7 @@
         "apexcharts": "^5.15.0",
         "flatpickr": "^4.6.13",
         "jsvectormap": "^1.7.0",
-        "prismjs": "^1.30.0"
+        "prismjs": "^1.30.0",
+        "sweetalert2": "^11.26.25"
     }
 }

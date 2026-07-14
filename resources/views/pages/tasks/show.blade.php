@@ -9,6 +9,7 @@
         'name' => $task->name,
         'description' => $task->description,
         'status' => $task->status,
+        'custom_id' => $task->custom_id,
         'created_by' => $task->created_by,
         'creator_name' => $task->creator?->name,
         'completed_by' => $task->completed_by,
@@ -83,9 +84,32 @@
             <section class="xl:sticky xl:top-4">
                 <div class="rounded-3xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-gray-900 xl:h-[calc(100dvh-170px)] xl:overflow-auto">
                     <div class="flex items-start justify-between gap-4">
-                        <div>
-                            <div class="text-xs font-semibold uppercase tracking-[0.24em] text-gray-500 dark:text-gray-400">Overview</div>
-                            <div class="mt-2 text-lg font-semibold text-gray-900 dark:text-gray-100">Task information</div>
+                        <div class="mt-2 flex items-center gap-4">
+                            <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                                Task Information
+                            </h2>
+
+                            <button
+                                type="button"
+                                @click="copyCustomId(task.custom_id)"
+                                :title="copied ? 'Copied!' : 'Click to copy'"
+                                class="group inline-flex cursor-pointer items-center rounded-xl border border-brand-200 bg-brand-50 px-4 py-2 text-base font-bold tracking-wide text-brand-700 shadow-sm transition hover:bg-brand-100 hover:shadow-md active:scale-95 dark:border-brand-500/30 dark:bg-brand-500/10 dark:text-brand-300 dark:hover:bg-brand-500/20">
+
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                     class="mr-2 h-4 w-4 opacity-70 group-hover:opacity-100"
+                                     fill="none"
+                                     viewBox="0 0 24 24"
+                                     stroke="currentColor">
+                                    <path stroke-linecap="round"
+                                          stroke-linejoin="round"
+                                          stroke-width="2"
+                                          d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2M10 10h8a2 2 0 012 2v6a2 2 0 01-2 2h-8a2 2 0 01-2-2v-6a2 2 0 012-2z"/>
+                                </svg>
+
+                                <span class="mr-2">ID:</span>
+
+                                <span x-text="task.custom_id || 'N/A'"></span>
+                            </button>
                         </div>
 
                         <div class="rounded-2xl bg-gray-50 px-4 py-3 text-right dark:bg-white/5">
@@ -351,6 +375,21 @@
                     });
                 });
 
+            },
+
+            copied: false,
+
+            async copyCustomId(id) {
+                if (!id) return;
+
+                try {
+                    await navigator.clipboard.writeText(id);
+
+                    toastSuccess(`ID copied: ${id}`, 'Copied', 1500);
+
+                } catch (error) {
+                    toastError('Failed to copy ID');
+                }
             },
 
 
