@@ -133,9 +133,7 @@
                                         type="button"
                                         @click="toggleDurationMode()"
                                         class="text-right text-sm font-semibold hover:underline focus:outline-none"
-                                        :class="new Date(task.end_date) < new Date(now)
-                                            ? 'text-red-600'
-                                            : 'text-emerald-600'"
+                                        :class="durationClass(task)"
                                         x-text="taskDuration(task)">
                                     </button>
                                 </div>
@@ -454,6 +452,14 @@
             taskDuration(task) {
                 if (!task?.end_date) return '-';
 
+                if (task.status === 'completed') {
+                    return 'COMPLETED';
+                }
+
+                if (task.status === 'rejected') {
+                    return 'REJECTED';
+                }
+
                 const end = new Date(task.end_date);
 
                 if (isNaN(end.getTime())) return '-';
@@ -476,6 +482,23 @@
                 const seconds = Math.floor(diff / 1000);
 
                 return `${days}d ${String(hours).padStart(2,'0')}h ${String(minutes).padStart(2,'0')}m ${String(seconds).padStart(2,'0')}s`;
+            },
+
+            durationClass(task) {
+
+                if (task.status === 'completed') {
+                    return 'text-emerald-600';
+                }
+
+                if (task.status === 'rejected') {
+                    return 'text-rose-600';
+                }
+
+                if (new Date(task.end_date) < new Date(this.now)) {
+                    return 'text-red-600';
+                }
+
+                return 'text-emerald-600';
             },
 
             isImageAttachment(attachment) {

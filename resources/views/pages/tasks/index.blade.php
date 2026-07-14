@@ -148,10 +148,8 @@
                         <td class="px-4 py-4">
                             <span
                                 class="font-mono text-sm font-semibold"
-                                :class="new Date(task.end_date) < new Date(now)
-                                    ? 'text-red-600'
-                                    : 'text-emerald-600'"
-                                x-text="countdown(task.end_date)">
+                                :class="elapsedClass(task)"
+                                x-text="countdown(task)">
                             </span>
                         </td>
 
@@ -379,12 +377,19 @@ function taskIndexPage(initialTasks = [], initialStats = {}) {
             }).format(date).replace(',', '');
         },
 
-        countdown(endDate) {
-            if (!endDate) return '-';
+        countdown(task) {
 
-            const end = new Date(endDate);
+            if (!task.end_date) return '-';
 
-            if (isNaN(end.getTime())) return '-';
+            if (task.status === 'completed') {
+                return 'COMPLETED';
+            }
+
+            if (task.status === 'rejected') {
+                return 'REJECTED';
+            }
+
+            const end = new Date(task.end_date);
 
             let diff = end.getTime() - this.now;
 
@@ -404,6 +409,23 @@ function taskIndexPage(initialTasks = [], initialStats = {}) {
             const seconds = Math.floor(diff / 1000);
 
             return `${days}d ${String(hours).padStart(2,'0')}h ${String(minutes).padStart(2,'0')}m ${String(seconds).padStart(2,'0')}s`;
+        },
+
+        elapsedClass(task) {
+
+            if (task.status === 'completed') {
+                return 'text-emerald-600';
+            }
+
+            if (task.status === 'rejected') {
+                return 'text-red-600';
+            }
+
+            if (new Date(task.end_date) < new Date(this.now)) {
+                return 'text-red-600';
+            }
+
+            return 'text-emerald-600';
         },
 
         normalizeTask(task) {
