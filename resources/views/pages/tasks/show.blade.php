@@ -339,7 +339,20 @@
                 this.timerInterval = setInterval(() => {
                     this.now = Date.now();
                 }, 1000);
+
+                history.scrollRestoration = 'manual';
+
+                this.$nextTick(() => {
+                    requestAnimationFrame(() => {
+                        window.scrollTo({
+                            top: document.documentElement.scrollHeight,
+                            behavior: 'instant' // yoki 'auto'
+                        });
+                    });
+                });
+
             },
+
 
             updateScrollLock() {
                 const locked = this.modals.edit || this.modals.confirm;
