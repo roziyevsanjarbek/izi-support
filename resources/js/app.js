@@ -10,8 +10,6 @@ import 'flatpickr/dist/flatpickr.min.css';
 import { Calendar } from '@fullcalendar/core';
 import './task-calendar';
 
-//Swal
-import Swal from 'sweetalert2';
 
 import axios from 'axios';
 
@@ -20,7 +18,6 @@ window.ApexCharts = ApexCharts;
 window.flatpickr = flatpickr;
 window.FullCalendar = Calendar;
 window.axios = axios;
-window.Swal = Swal;
 
 axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
