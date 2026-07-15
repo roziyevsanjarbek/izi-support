@@ -935,6 +935,32 @@ html.dark .composer-input::placeholder {
     color: #9ca3af;
 }
 
+.calendar-month-events {
+    overflow: hidden !important;
+}
+
+.month-event-badge {
+    height: 18px;
+    padding: 0 6px;
+    border-radius: 9999px;
+    box-shadow: none;
+    transition: transform .12s ease, background-color .12s ease;
+}
+
+.month-event-badge:hover {
+    transform: translateY(-1px);
+}
+
+.month-event-more {
+    margin-top: 2px;
+    padding-left: 2px;
+    line-height: 1;
+}
+
+.month-cell {
+    min-height: 126px;
+}
+
 @media screen and (max-width: 525px) {
   .flatpickr-calendar.static {
     margin-right: -60px !important;

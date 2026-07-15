@@ -579,18 +579,21 @@ import {
     function renderMonthBadge(event) {
         const badge = document.createElement('button');
         badge.type = 'button';
-        badge.className = 'w-full rounded-xl px-2 py-1.5 text-left text-[11px] font-medium truncate cursor-pointer shadow-sm relative overflow-hidden';
+        badge.className = 'month-event-badge w-full rounded-lg px-2 py-1 text-left text-[11px] font-medium truncate cursor-pointer relative overflow-hidden';
         badge.style.background = hexToRgba(event.color || '#0f172a', 0.11);
         badge.style.color = darkenColor(event.color || '#0f172a', 0.08);
         badge.dataset.eventId = event.id;
+
         if (event.reminder_id) badge.dataset.reminderId = event.reminder_id;
         if (event.occurrence_at) badge.dataset.occurrenceAt = event.occurrence_at;
+
         badge.innerHTML = `
-            <div class="calendar-event-month-inner flex items-center gap-1 min-w-0">
-                <span class="truncate">${escapeHtml(event.title || 'Untitled')}</span>
-            </div>
-            ${renderEventActions(event, true)}
-        `;
+        <div class="flex items-center gap-1 min-w-0">
+            <span class="h-2 w-2 shrink-0 rounded-full" style="background:${event.color || '#0f172a'}"></span>
+            <span class="truncate">${escapeHtml(event.title || 'Untitled')}</span>
+        </div>
+    `;
+
         return badge;
     }
 
@@ -763,26 +766,26 @@ import {
         return target?.closest?.('#calendarScroll, #calendarMonthBody > div, [data-month-events], .overflow-y-auto, .calendar-scroll, #calendarSidebar') || null;
     }
 
-    function onDocumentWheel(e) {
-        const target = findScrollableTarget(e.target);
-        if (!target) return;
-        if (target.matches?.('[data-month-events]') && canScrollInside(target, e.deltaY)) return;
-        if (target.id === 'calendarScroll' || target.matches?.('#calendarMonthBody > div')) {
-            if (canScrollInside(target, e.deltaY)) return;
-        }
-        if (state.view !== 'month') return;
-        const monthBody = e.target.closest('#calendarMonthBody');
-        if (!monthBody) return;
-        const innerScroll = monthBody.firstElementChild;
-        if (innerScroll && canScrollInside(innerScroll, e.deltaY)) return;
-        if (state.navigating || state.monthWheelLock) { e.preventDefault(); return; }
-        e.preventDefault();
-        state.monthWheelLock = true;
-        const step = e.deltaY > 0 ? 1 : -1;
-        navigate('month', shiftDate(state.selectedDate, 'month', step)).finally(() => {
-            setTimeout(() => { state.monthWheelLock = false; }, 180);
-        });
-    }
+    // function onDocumentWheel(e) {
+    //     const target = findScrollableTarget(e.target);
+    //     if (!target) return;
+    //     if (target.matches?.('[data-month-events]') && canScrollInside(target, e.deltaY)) return;
+    //     if (target.id === 'calendarScroll' || target.matches?.('#calendarMonthBody > div')) {
+    //         if (canScrollInside(target, e.deltaY)) return;
+    //     }
+    //     if (state.view !== 'month') return;
+    //     const monthBody = e.target.closest('#calendarMonthBody');
+    //     if (!monthBody) return;
+    //     const innerScroll = monthBody.firstElementChild;
+    //     if (innerScroll && canScrollInside(innerScroll, e.deltaY)) return;
+    //     if (state.navigating || state.monthWheelLock) { e.preventDefault(); return; }
+    //     e.preventDefault();
+    //     state.monthWheelLock = true;
+    //     const step = e.deltaY > 0 ? 1 : -1;
+    //     navigate('month', shiftDate(state.selectedDate, 'month', step)).finally(() => {
+    //         setTimeout(() => { state.monthWheelLock = false; }, 180);
+    //     });
+    // }
 
     function initPickers() {
         if (typeof window.flatpickr !== 'function') return;
@@ -853,18 +856,52 @@ import {
         renderFiltersActive();
         updateToolbarUserLabel();
         if (state.view === 'month') {
+            const MAX_EVENTS_PER_DAY = 3;
+            const dayBuckets = new Map();
+
             visible.forEach((event) => {
                 const start = ensureDate(event.start_at);
                 const end = ensureDate(event.end_at || event.start_at) || start;
                 if (!start || !end) return;
+
                 let cursor = new Date(startOfDay(start));
                 const last = endOfDay(end);
+
                 while (cursor <= last) {
-                    const target = document.querySelector(`[data-month-events="${localDate(cursor)}"]`);
-                    if (target) target.appendChild(renderMonthBadge(event));
+                    const key = localDate(cursor);
+
+                    if (!dayBuckets.has(key)) {
+                        dayBuckets.set(key, []);
+                    }
+
+                    dayBuckets.get(key).push(event);
                     cursor.setDate(cursor.getDate() + 1);
                 }
             });
+
+            dayBuckets.forEach((eventsForDay, dayKey) => {
+                const target = document.querySelector(`[data-month-events="${dayKey}"]`);
+                if (!target) return;
+
+                eventsForDay.slice(0, MAX_EVENTS_PER_DAY).forEach((event) => {
+                    target.appendChild(renderMonthBadge(event));
+                });
+
+                if (eventsForDay.length > MAX_EVENTS_PER_DAY) {
+                    const moreBtn = document.createElement('button');
+                    moreBtn.type = 'button';
+                    moreBtn.className = 'month-event-more text-[11px] font-semibold text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100';
+                    moreBtn.textContent = `+${eventsForDay.length - MAX_EVENTS_PER_DAY} more`;
+
+                    moreBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        navigate('day', dayKey);
+                    });
+                    target.appendChild(moreBtn);
+                }
+            });
+
             return;
         }
         const dayMap = buildDayMap(visible);
@@ -1246,7 +1283,7 @@ import {
             labelEl.textContent = label;
         } else {
             fields.saveEvent.innerHTML = `
-                
+
                 <span data-save-label>${label}</span>
             `;
         }
@@ -1381,7 +1418,7 @@ import {
         });
         document.addEventListener('input', onDocumentInput);
         document.addEventListener('change', onDocumentChange);
-        document.addEventListener('wheel', onDocumentWheel, { passive: false });
+        // document.addEventListener('wheel', onDocumentWheel, { passive: false });
         document.addEventListener('pointerdown', onPointerDown, true);
         document.addEventListener('pointermove', onPointerMove, true);
         document.addEventListener('pointerup', onPointerUp, true);

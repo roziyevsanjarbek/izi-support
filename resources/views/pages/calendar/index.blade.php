@@ -221,7 +221,7 @@ $showBackToSelf = $authUserId && (int) $selectedUserId !== (int) $authUserId;
                                             <div class="flex items-center justify-between">
                                                 <div class="inline-flex h-7 w-7 items-center justify-center rounded-full {{ $cell['is_today'] ? 'bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900' : '' }} text-sm font-semibold">{{ $cell['day'] }}</div>
                                             </div>
-                                            <div class="mt-2 space-y-1 overflow-y-auto text-[11px]" style="max-height:80px" data-month-events="{{ $cell['date'] }}"></div>
+                                            <div class="mt-2 flex flex-col gap-1 text-[11px] calendar-month-events" data-month-events="{{ $cell['date'] }}"></div>
                                         </button>
                                     @endforeach
                                 </div>
