@@ -6,7 +6,7 @@
     <div class="rounded-xl bg-white shadow p-6 dark:bg-gray-900">
 
         <div class="flex items-center justify-between mb-6">
-            <h1 class="text-2xl font-bold">
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
                 Task Calendar
             </h1>
             <div class="flex items-center gap-4">
@@ -17,7 +17,7 @@
                     <button id="usersSelectButton"
                             class="inline-flex min-w-[220px] items-center justify-between rounded-lg border px-4 py-2">
 
-                            <span id="usersSelectValue">
+                            <span id="usersSelectValue" class="text-gray-900 dark:text-white">
                                 {{ optional($users->firstWhere('id',$selectedUserId))->name ?? 'All users' }}
                             </span>
 
@@ -41,18 +41,17 @@
                          class="hidden absolute right-0 mt-2 z-50 w-80 rounded-xl border border-gray-200 bg-white shadow-xl dark:border-gray-700 dark:bg-gray-900">
                         <input
                             id="usersSelectSearch"
-                            class="w-full border-b p-3"
-                            placeholder="Search user...">
+                            class="w-full border-b p-3 bg-white text-gray-900 placeholder-gray-500 dark:bg-gray-900 dark:text-white dark:placeholder-gray-400 dark:border-gray-700"
+                            placeholder="Search user..."
+                        >
 
                         <div class="max-h-80 overflow-y-auto">
 
                             <button
                                 data-user-option
                                 data-user-id=""
-                                class="block w-full px-3 py-2 text-left hover:bg-gray-100">
-
+                                class="block w-full px-3 py-2 text-left text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-800">
                                 All users
-
                             </button>
 
                             @foreach($users as $user)
@@ -60,10 +59,8 @@
                                 <button
                                     data-user-option
                                     data-user-id="{{ $user->id }}"
-                                    class="block w-full px-3 py-2 text-left hover:bg-gray-100">
-
+                                    class="block w-full px-3 py-2 text-left text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-800">
                                     {{ $user->name }}
-
                                 </button>
 
                             @endforeach

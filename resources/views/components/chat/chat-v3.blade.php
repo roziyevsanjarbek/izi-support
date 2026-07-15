@@ -269,7 +269,11 @@
             <div class="composer-box">
                 <div class="js-previews mb-2"></div>
                 <div class="flex items-end gap-2">
-                    <button type="button" class="js-attach inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 bg-white text-lg dark:border-slate-800 dark:bg-slate-950">＋</button>
+                    <button
+                        type="button"
+                        class="js-attach inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 bg-white text-lg text-slate-700 dark:border-slate-800 dark:bg-slate-950 dark:text-white">
+                        ＋
+                    </button>
                     <input type="file" class="js-files hidden" multiple>
                     <textarea class="composer-input js-text-input" placeholder="Write a message..."></textarea>
                     <button type="button" class="js-send inline-flex h-11 items-center justify-center rounded-2xl bg-blue-600 px-4 font-semibold text-white">Send</button>

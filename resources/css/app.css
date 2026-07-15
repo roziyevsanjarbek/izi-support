@@ -919,6 +919,22 @@ pre[class*='language-'] {
     font-weight: 600;
 }
 
+.composer-input {
+    color: #111827;
+}
+
+.composer-input::placeholder {
+    color: #6b7280;
+}
+
+html.dark .composer-input {
+    color: #fff;
+}
+
+html.dark .composer-input::placeholder {
+    color: #9ca3af;
+}
+
 @media screen and (max-width: 525px) {
   .flatpickr-calendar.static {
     margin-right: -60px !important;
