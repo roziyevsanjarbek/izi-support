@@ -4,7 +4,7 @@
 
 @section('content')
 @php
-    $taskItems = $tasks->getCollection()->map(function ($task) {
+    $taskItems = $tasks->getCollection()->values()->map(function ($task, $index) use ($tasks) {
         return [
             'id' => $task->id,
             'name' => $task->name,
@@ -20,6 +20,7 @@
             'duration_mode' => 'hours',
             'unread_count' => $task->unread_count ?? 0,
             'attachments_count' => $task->attachments_count ?? 0,
+            'row_number' => ($tasks->currentPage() - 1) * $tasks->perPage() + $index + 1,
 
             'reads' => $task->reads->map(function ($read) {
                 return [
@@ -124,7 +125,7 @@
                 <tbody class="divide-y divide-gray-200 dark:divide-gray-800">
                 <template x-for="task in tasks" :key="task.id">
                     <tr class="hover:bg-gray-50/70 dark:hover:bg-white/5">
-                        <td class="px-4 py-4 text-sm text-gray-700 dark:text-gray-300" x-text="task.id"></td>
+                        <td class="px-4 py-4 text-sm text-gray-700 dark:text-gray-300" x-text="task.row_number"></td>
                         <td class="px-4 py-4 text-sm text-gray-700 dark:text-gray-300" x-text="task.custom_id || 'N/A'"></td>
 
                         <td class="px-4 py-4">
