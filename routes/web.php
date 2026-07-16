@@ -38,6 +38,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/users/{user}', [UserController::class, 'show'])->name('users.show');
     Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
     Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+
     Route::prefix('tasks')->name('tasks.')->group(function () {
         Route::get('/', [TaskController::class, 'index'])->name('index');
         Route::get('/calendar', [TaskController::class, 'calendar'])->name('calendar');
@@ -59,7 +60,6 @@ Route::middleware('auth')->group(function () {
         Route::delete('/{request}', [RequestController::class, 'destroy'])->name('destroy');
         Route::post('/{request}/offers', [RequestBidController::class, 'store'])->name('offers.store');
     });
-
 
     //Profile
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
